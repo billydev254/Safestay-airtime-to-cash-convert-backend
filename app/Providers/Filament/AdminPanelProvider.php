@@ -27,6 +27,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Safestay Deals Admin')
+            ->brandLogo(asset('images/admin-logo.png'))
+            ->darkModeBrandLogo(asset('images/admin-logo-dark.png'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(asset('images/admin-logo.png'))
             ->colors([
                 'primary' => Color::Emerald,
             ])
@@ -41,7 +46,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
