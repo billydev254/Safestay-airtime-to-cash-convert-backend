@@ -212,6 +212,8 @@
             margin-bottom: 16px;
         }
         .card .icon.icon-red { background: #FBEAE9; color: var(--red); }
+        .card .icon.icon-logo { background: transparent; padding: 0; overflow: hidden; }
+        .card .icon.icon-logo img { width: 100%; height: 100%; border-radius: 12px; object-fit: cover; }
         .card h3 { font-size: 17px; margin-bottom: 8px; }
         .card p { font-size: 14px; margin-bottom: 0; }
         .card .pct {
@@ -349,16 +351,16 @@
                 </div>
                 <div class="cards">
                     <div class="card">
-                        <div class="icon" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v12M18 6v12"/></svg>
+                        <div class="icon icon-logo">
+                            <img src="/images/safaricom-logo.jpeg" alt="Safaricom logo" width="48" height="48">
                         </div>
                         <h3>Safaricom Airtime to Cash</h3>
                         <p>Send your Safaricom airtime and get cash in your M-Pesa wallet within minutes.</p>
                         <span class="pct">Up to 80% cash back</span>
                     </div>
                     <div class="card">
-                        <div class="icon icon-red" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v12M18 6v12"/></svg>
+                        <div class="icon icon-logo">
+                            <img src="/images/airtel-logo.png" alt="Airtel logo" width="48" height="48">
                         </div>
                         <h3>Airtel Airtime to Cash</h3>
                         <p>Convert Airtel airtime to M-Pesa cash quickly and securely, any time of day.</p>
