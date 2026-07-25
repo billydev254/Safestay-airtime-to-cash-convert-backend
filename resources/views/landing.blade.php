@@ -261,7 +261,7 @@
         }
         footer.site .cols {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
             gap: 32px;
             margin-bottom: 32px;
         }
@@ -456,6 +456,13 @@
                         <li><a href="tel:+254704922384">+254 704 922384</a></li>
                         <li><a href="mailto:info@safestay.co.ke">info@safestay.co.ke</a></li>
                         <li>Monday – Sunday: 24/7</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="{{ route('privacy') }}">Privacy Policy</a></li>
+                        <li><a href="{{ route('terms') }}">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
