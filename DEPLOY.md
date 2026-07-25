@@ -21,7 +21,7 @@
    (already prepared, has the real DB credentials and a fresh APP_KEY) into
    `~/safestay-backend/.env` on the server.
 
-4. Import the database: use phpMyAdmin on `spikorac_main` → SQL tab → paste
+4. Import the database: use phpMyAdmin on `safestay_airtime_to_cash` → SQL tab → paste
    `safestay_import.sql` (already covers schema + seed data), **or**, since
    the repo is already cloned with `.env` in place, just run migrations
    directly instead:
