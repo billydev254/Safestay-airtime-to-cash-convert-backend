@@ -119,18 +119,6 @@
             gap: 48px;
             align-items: center;
         }
-        .eyebrow {
-            display: inline-block;
-            background: var(--green);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            padding: 6px 12px;
-            border-radius: 999px;
-            margin-bottom: 18px;
-        }
         .hero h1 span { color: var(--green); }
         .hero p.lead { font-size: 18px; max-width: 46ch; }
         .hero-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; align-items: center; }
@@ -179,6 +167,14 @@
         .btn-outline:hover { border-color: var(--green); color: var(--green); }
 
         .hero-art { position: relative; }
+        .hero-art img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            background: var(--green-light);
+            aspect-ratio: 520 / 460;
+            object-fit: cover;
+        }
 
         .services { background: #fff; }
         .section-head { max-width: 640px; margin: 0 auto 48px; text-align: center; }
@@ -212,9 +208,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            color: var(--green);
             margin-bottom: 16px;
         }
+        .card .icon.icon-red { background: #FBEAE9; color: var(--red); }
         .card h3 { font-size: 17px; margin-bottom: 8px; }
         .card p { font-size: 14px; margin-bottom: 0; }
         .card .pct {
@@ -250,25 +247,6 @@
         }
         .step h3 { font-size: 16px; }
         .step p { font-size: 14px; }
-
-        .trust {
-            background: var(--green-dark);
-            color: #fff;
-        }
-        .trust .wrap { display: flex; align-items: center; gap: 32px; }
-        .trust h2 { color: #fff; }
-        .trust p { color: rgba(255,255,255,0.85); font-size: 16px; margin-bottom: 0; }
-        .trust .badge {
-            flex-shrink: 0;
-            width: 84px;
-            height: 84px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-        }
 
         .download { text-align: center; }
         .download .store-badge { margin: 8px auto 0; }
@@ -312,7 +290,6 @@
             h1 { font-size: 32px; }
             .cards { grid-template-columns: repeat(2, 1fr); }
             .steps { grid-template-columns: 1fr; }
-            .trust .wrap { flex-direction: column; text-align: center; }
             footer.site .cols { grid-template-columns: 1fr; }
         }
     </style>
@@ -339,7 +316,6 @@
         <section class="hero">
             <div class="wrap">
                 <div>
-                    <span class="eyebrow">Made for Kenya 🇰🇪</span>
                     <h1>Turn airtime into <span>M-Pesa cash</span>, instantly.</h1>
                     <p class="lead">
                         Convert Safaricom and Airtel airtime, and Bonga points, into cash in
@@ -349,7 +325,7 @@
                     <div class="hero-ctas">
                         <a class="store-badge" href="#download" aria-label="Safestay Deals on Google Play — coming soon">
                             <span class="soon-tag">Coming soon</span>
-                            <span class="icon" aria-hidden="true">▶</span>
+                            <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                             <span class="text">
                                 <small>GET IT ON</small>
                                 <strong>Google Play</strong>
@@ -359,63 +335,7 @@
                     </div>
                 </div>
                 <div class="hero-art">
-                    <svg viewBox="0 0 520 460" role="img" aria-label="Illustration of a man and a woman smiling while looking at the Safestay Deals app on a phone" xmlns="http://www.w3.org/2000/svg">
-                        <ellipse cx="260" cy="420" rx="200" ry="24" fill="#00541A" opacity="0.08"/>
-
-                        <!-- Woman -->
-                        <g transform="translate(70,150)">
-                            <ellipse cx="60" cy="270" rx="55" ry="14" fill="#000" opacity="0.06"/>
-                            <path d="M15 270 C10 180 20 120 60 110 C100 120 110 180 105 270 Z" fill="#D33B36"/>
-                            <circle cx="60" cy="60" r="42" fill="#8D5524"/>
-                            <path d="M18 55 C18 15 100 15 100 55 C100 35 92 25 60 25 C28 25 18 35 18 55 Z" fill="#2B1B12"/>
-                            <circle cx="45" cy="62" r="4" fill="#2B1B12"/>
-                            <circle cx="76" cy="62" r="4" fill="#2B1B12"/>
-                            <path d="M46 78 Q60 90 75 78" stroke="#2B1B12" stroke-width="3" fill="none" stroke-linecap="round"/>
-                            <path d="M-4 190 C-10 150 10 120 40 118" stroke="#8D5524" stroke-width="16" fill="none" stroke-linecap="round"/>
-                        </g>
-
-                        <!-- Man -->
-                        <g transform="translate(330,150)">
-                            <ellipse cx="60" cy="270" rx="55" ry="14" fill="#000" opacity="0.06"/>
-                            <path d="M15 270 C8 185 20 120 60 112 C100 120 112 185 105 270 Z" fill="#00541A"/>
-                            <circle cx="60" cy="58" r="42" fill="#6E4A2E"/>
-                            <path d="M18 50 C18 18 102 18 102 50 C102 30 90 20 60 20 C30 20 18 30 18 50 Z" fill="#1A1A1A"/>
-                            <circle cx="45" cy="60" r="4" fill="#1A1A1A"/>
-                            <circle cx="76" cy="60" r="4" fill="#1A1A1A"/>
-                            <path d="M46 76 Q60 88 75 76" stroke="#1A1A1A" stroke-width="3" fill="none" stroke-linecap="round"/>
-                            <path d="M124 190 C130 150 108 120 78 118" stroke="#6E4A2E" stroke-width="16" fill="none" stroke-linecap="round"/>
-                        </g>
-
-                        <!-- Phone -->
-                        <g transform="translate(175,60)">
-                            <rect x="0" y="0" width="170" height="340" rx="28" fill="#111827"/>
-                            <rect x="8" y="10" width="154" height="320" rx="20" fill="#fff"/>
-                            <rect x="8" y="10" width="154" height="56" rx="20" fill="#007F3B"/>
-                            <rect x="8" y="46" width="154" height="20" fill="#007F3B"/>
-                            <circle cx="30" cy="38" r="10" fill="#fff" opacity="0.9"/>
-                            <text x="48" y="42" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="700">Safestay Deals</text>
-                            <rect x="20" y="82" width="130" height="46" rx="10" fill="#EFF6EF"/>
-                            <text x="30" y="110" font-family="Arial, sans-serif" font-size="12" fill="#00541A" font-weight="700">80% cash back</text>
-                            <rect x="20" y="138" width="60" height="60" rx="10" fill="#F7F8FA" stroke="#E4E7EB"/>
-                            <rect x="90" y="138" width="60" height="60" rx="10" fill="#F7F8FA" stroke="#E4E7EB"/>
-                            <circle cx="50" cy="160" r="10" fill="#007F3B"/>
-                            <circle cx="120" cy="160" r="10" fill="#D33B36"/>
-                            <rect x="30" y="176" width="40" height="8" rx="4" fill="#E4E7EB"/>
-                            <rect x="100" y="176" width="40" height="8" rx="4" fill="#E4E7EB"/>
-                            <rect x="20" y="210" width="130" height="14" rx="7" fill="#F7F8FA"/>
-                            <rect x="20" y="232" width="130" height="14" rx="7" fill="#F7F8FA"/>
-                            <rect x="20" y="254" width="130" height="14" rx="7" fill="#F7F8FA"/>
-                            <rect x="20" y="286" width="130" height="34" rx="10" fill="#007F3B"/>
-                            <text x="85" y="308" font-family="Arial, sans-serif" font-size="13" fill="#fff" font-weight="700" text-anchor="middle">Convert</text>
-                        </g>
-
-                        <!-- sparkles -->
-                        <g fill="#D33B36">
-                            <circle cx="90" cy="90" r="5"/>
-                            <circle cx="440" cy="120" r="6"/>
-                            <circle cx="420" cy="330" r="4"/>
-                        </g>
-                    </svg>
+                    <img src="/images/hero.jpg" alt="A man and a woman smiling while looking at the Safestay Deals app on a phone" width="520" height="460">
                 </div>
             </div>
         </section>
@@ -429,24 +349,32 @@
                 </div>
                 <div class="cards">
                     <div class="card">
-                        <div class="icon" aria-hidden="true">💚</div>
+                        <div class="icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v12M18 6v12"/></svg>
+                        </div>
                         <h3>Safaricom Airtime to Cash</h3>
                         <p>Send your Safaricom airtime and get cash in your M-Pesa wallet within minutes.</p>
                         <span class="pct">Up to 80% cash back</span>
                     </div>
                     <div class="card">
-                        <div class="icon" aria-hidden="true">❤️</div>
+                        <div class="icon icon-red" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 6v12M18 6v12"/></svg>
+                        </div>
                         <h3>Airtel Airtime to Cash</h3>
                         <p>Convert Airtel airtime to M-Pesa cash quickly and securely, any time of day.</p>
                         <span class="pct">Up to 50% cash back</span>
                     </div>
                     <div class="card">
-                        <div class="icon" aria-hidden="true">🎁</div>
+                        <div class="icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/><path d="M12 8c-1.5 0-3-1-3-2.5S10 3 12 3s3 1 3 2.5S13.5 8 12 8Z"/></svg>
+                        </div>
                         <h3>Bonga Points to Cash</h3>
                         <p>Turn your Safaricom Bonga loyalty points into real M-Pesa cash, hassle-free.</p>
                     </div>
                     <div class="card">
-                        <div class="icon" aria-hidden="true">📶</div>
+                        <div class="icon" aria-hidden="true">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20v-12M22 20v-16"/></svg>
+                        </div>
                         <h3>Affordable Data Deals</h3>
                         <p>Data, Minutes and SMS bundles for any line, priced lower than you'd expect.</p>
                         <span class="pct">From KES 19</span>
@@ -482,28 +410,14 @@
             </div>
         </section>
 
-        <section class="trust">
-            <div class="wrap">
-                <div class="badge" aria-hidden="true">🔒</div>
-                <div>
-                    <h2>Secured by the Safaricom Daraja API</h2>
-                    <p>
-                        Every payout runs through Safaricom's official Daraja API, so cash lands
-                        in your M-Pesa wallet directly and securely — no middleman ever holds
-                        your money.
-                    </p>
-                </div>
-            </div>
-        </section>
-
         <section class="download" id="download">
             <div class="wrap">
                 <span class="eyebrow-muted">Get the app</span>
-                <h2>Safestay Deals is launching on Google Play soon</h2>
-                <p>We're putting the finishing touches on the Play Store listing. Check back shortly.</p>
+                <h2>Download Safestay Deals</h2>
+                <p>Convert airtime to cash and grab the best data deals in Kenya, right from your phone.</p>
                 <a class="store-badge" href="#download" aria-label="Safestay Deals on Google Play — coming soon">
                     <span class="soon-tag">Coming soon</span>
-                    <span class="icon" aria-hidden="true">▶</span>
+                    <svg class="icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
                     <span class="text">
                         <small>GET IT ON</small>
                         <strong>Google Play</strong>
