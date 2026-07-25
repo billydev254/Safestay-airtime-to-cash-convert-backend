@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Bundle;
 use App\Models\BundleOrder;
 use App\Services\Daraja\DarajaManager;
+use App\Support\PhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class StkPushController extends Controller
 {
@@ -29,20 +31,27 @@ class StkPushController extends Controller
             'mpesa_number' => ['required', 'string'],
         ]);
 
+        try {
+            $recipientNumber = PhoneNumber::normalize($validated['recipient_number']);
+            $mpesaNumber = PhoneNumber::normalize($validated['mpesa_number']);
+        } catch (InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
         $bundle = Bundle::findOrFail($validated['bundle_id']);
 
         $order = BundleOrder::create([
             'bundle_id' => $bundle->id,
-            'recipient_number' => $validated['recipient_number'],
-            'mpesa_number' => $validated['mpesa_number'],
+            'recipient_number' => $recipientNumber,
+            'mpesa_number' => $mpesaNumber,
             'amount' => $bundle->price,
             'status' => 'pending_payment',
         ]);
 
         $result = $this->daraja->stkPush(
-            phoneNumber: $validated['mpesa_number'],
+            phoneNumber: $mpesaNumber,
             amount: $bundle->price,
-            accountReference: $validated['recipient_number'],
+            accountReference: $recipientNumber,
             transactionDesc: "Bundle: {$bundle->label}",
             callbackUrl: route('webhooks.mpesa.stk-push.callback'),
         );

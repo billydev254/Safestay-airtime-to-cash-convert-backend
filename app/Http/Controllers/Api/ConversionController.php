@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Conversion;
 use App\Models\Setting;
+use App\Support\PhoneNumber;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 /**
  * Records an airtime-to-cash or Bonga-to-cash intent. No payment is
@@ -25,6 +27,13 @@ class ConversionController extends Controller
             'mpesa_number' => ['required', 'string'],
             'amount_in' => ['required', 'integer', 'min:1'],
         ]);
+
+        try {
+            $validated['sender_number'] = PhoneNumber::normalize($validated['sender_number']);
+            $validated['mpesa_number'] = PhoneNumber::normalize($validated['mpesa_number']);
+        } catch (InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         $cashbackPct = $validated['type'] === 'airtime'
             ? (int) Setting::get("{$validated['network']}_cashback_pct", 0)
