@@ -172,7 +172,7 @@
             height: auto;
             border-radius: 20px;
             background: var(--green-light);
-            aspect-ratio: 520 / 460;
+            aspect-ratio: 1400 / 787;
             object-fit: cover;
         }
 
@@ -337,7 +337,7 @@
                     </div>
                 </div>
                 <div class="hero-art">
-                    <img src="/images/hero.jpg" alt="A man and a woman smiling while looking at the Safestay Deals app on a phone" width="520" height="460">
+                    <img src="/images/hero.jpg" alt="A man and a woman smiling while looking at the Safestay Deals app on a phone" width="1400" height="787">
                 </div>
             </div>
         </section>
