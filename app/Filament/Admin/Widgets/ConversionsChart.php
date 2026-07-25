@@ -10,6 +10,12 @@ class ConversionsChart extends LineChartWidget
 {
     protected ?string $heading = 'Conversions — last 14 days';
 
+    protected static ?int $sort = 2;
+
+    protected int | string | array $columnSpan = 1;
+
+    protected ?string $maxHeight = '300px';
+
     protected function getData(): array
     {
         $days = collect(range(13, 0))->map(fn (int $offset) => Carbon::today()->subDays($offset));

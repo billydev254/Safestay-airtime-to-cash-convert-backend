@@ -10,6 +10,12 @@ class BundleSalesChart extends DoughnutChartWidget
 {
     protected ?string $heading = 'Bundle revenue by category (paid orders)';
 
+    protected static ?int $sort = 3;
+
+    protected int | string | array $columnSpan = 1;
+
+    protected ?string $maxHeight = '300px';
+
     protected function getData(): array
     {
         $categories = ['data', 'minutes', 'sms'];
