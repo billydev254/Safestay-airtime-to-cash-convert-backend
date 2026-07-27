@@ -37,6 +37,7 @@ class DarajaManager
     public function stkPush(string $phoneNumber, int $amount, string $accountReference, string $transactionDesc, string $callbackUrl): array
     {
         $shortcode = config('daraja.till.shortcode');
+        $storeNumber = config('daraja.till.store_number');
         $passkey = config('daraja.till.passkey');
         $timestamp = now()->format('YmdHis');
         $password = base64_encode($shortcode.$passkey.$timestamp);
@@ -48,7 +49,7 @@ class DarajaManager
             'TransactionType' => 'CustomerBuyGoodsOnline',
             'Amount' => $amount,
             'PartyA' => $phoneNumber,
-            'PartyB' => $shortcode,
+            'PartyB' => $storeNumber,
             'PhoneNumber' => $phoneNumber,
             'CallBackURL' => $callbackUrl,
             'AccountReference' => $accountReference,
