@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\StkPushController;
 use App\Http\Controllers\Webhooks\B2cCallbackController;
 use App\Http\Controllers\Webhooks\C2bConfirmationController;
 use App\Http\Controllers\Webhooks\C2bValidationController;
-use App\Http\Controllers\Webhooks\SmsIntakeDebugController;
+use App\Http\Controllers\Webhooks\SmsIntakeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +28,7 @@ Route::prefix('webhooks/mpesa')->name('webhooks.mpesa.')->group(function () {
     Route::post('stk-push/callback', [StkPushController::class, 'callback'])->name('stk-push.callback');
 });
 
-// --- Temporary: logs the SMS-forwarder app's real payload shape before
-// building the actual parser + auto-payout logic. Remove once done. ---
-Route::post('webhooks/sms-intake-debug', SmsIntakeDebugController::class)->name('webhooks.sms-intake-debug');
+// --- SMS-forwarder app on the receiving line calls this to report an
+// incoming airtime transfer (see SmsIntakeService for the parsing/matching
+// logic and the shared-secret header this requires). ---
+Route::post('webhooks/sms-intake', SmsIntakeController::class)->name('webhooks.sms-intake');

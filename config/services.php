@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'sms_intake' => [
+        'secret' => env('SMS_INTAKE_SECRET'),
+    ],
+
 ];
