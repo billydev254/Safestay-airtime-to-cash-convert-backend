@@ -39,10 +39,24 @@ class ConversionController extends Controller
             ? (int) Setting::get("{$validated['network']}_cashback_pct", 0)
             : (int) Setting::get('bonga_rate', 0);
 
+        $amountPayout = (int) round($validated['amount_in'] * $cashbackPct / 100);
+
+        // Daraja's B2C API rejects payouts below its own minimum ("Declined
+        // due to limit rule") — block these here so the customer never sends
+        // real airtime toward a payout that's guaranteed to fail.
+        $minPayout = (int) Setting::get('min_payout_kes', 10);
+        if ($amountPayout < $minPayout) {
+            $minAmountIn = (int) ceil($minPayout * 100 / max($cashbackPct, 1));
+
+            return response()->json([
+                'message' => "That amount pays out KES {$amountPayout}, below our KES {$minPayout} minimum. Send at least KES {$minAmountIn} to convert.",
+            ], 422);
+        }
+
         $conversion = Conversion::create([
             ...$validated,
             'cashback_pct' => $cashbackPct,
-            'amount_payout' => (int) round($validated['amount_in'] * $cashbackPct / 100),
+            'amount_payout' => $amountPayout,
             'status' => 'awaiting_intake',
         ]);
 

@@ -24,6 +24,7 @@ class ConfigController extends Controller
                 'airtel' => (int) Setting::get('airtel_cashback_pct', 50),
             ],
             'bonga_rate' => (int) Setting::get('bonga_rate', 50),
+            'min_payout_kes' => (int) Setting::get('min_payout_kes', 10),
             'bundles' => Bundle::where('active', true)
                 ->orderBy('category')
                 ->orderBy('sort_order')

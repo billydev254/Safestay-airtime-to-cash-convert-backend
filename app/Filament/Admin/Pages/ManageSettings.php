@@ -27,6 +27,7 @@ class ManageSettings extends Page implements HasForms
             'safaricom_cashback_pct' => Setting::get('safaricom_cashback_pct', 80),
             'airtel_cashback_pct' => Setting::get('airtel_cashback_pct', 50),
             'bonga_rate' => Setting::get('bonga_rate', 50),
+            'min_payout_kes' => Setting::get('min_payout_kes', 10),
             'till_shortcode' => Setting::get('till_shortcode'),
             'paybill_shortcode' => Setting::get('paybill_shortcode'),
         ]);
@@ -57,6 +58,12 @@ class ManageSettings extends Page implements HasForms
                     ->maxValue(100)
                     ->suffix('%')
                     ->required(),
+                TextInput::make('min_payout_kes')
+                    ->label('Minimum cash payout (KES)')
+                    ->numeric()
+                    ->minValue(1)
+                    ->required()
+                    ->helperText('Daraja B2C rejects payouts below its own minimum — conversions that would pay out less than this are blocked before the customer sends airtime for nothing.'),
                 TextInput::make('till_shortcode')
                     ->label('Business Till (bundle purchases)')
                     ->helperText('Buy Goods till — used for STK push / C2B on bundle purchases.'),
