@@ -8,14 +8,21 @@ use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 /**
- * Parses Safaricom's "Sambaza" airtime-transfer confirmation SMS (forwarded
- * by a third-party SMS-forwarding app on the receiving line), matches it to
- * a pending conversion by sender number + amount, then triggers the same
- * payout path the admin's manual "mark received" button uses.
+ * Parses the airtime-transfer confirmation SMS the receiving line gets
+ * (forwarded by a third-party SMS-forwarding app), matches it to a pending
+ * conversion by network + sender number + amount, then triggers the same
+ * payout path the admin's manual "mark received" button uses. Each carrier
+ * phrases its confirmation SMS differently, so patterns are per-network.
  */
 class SmsIntakeService
 {
-    private const PATTERN = '/subscriber\s+(\d+)\s+transferred\s+([\d.]+)\s*KSH/i';
+    // [network, regex, sender capture group, amount capture group]
+    private const PATTERNS = [
+        // Safaricom Sambaza: "The subscriber 712345678 transferred 5.00 KSH for you."
+        ['safaricom', '/subscriber\s+(\d+)\s+transferred\s+([\d.]+)\s*KSH/i', 1, 2],
+        // Airtel Me2U: "You have received 50 KSH from 788063011. Your new balance is ..."
+        ['airtel', '/received\s+([\d.]+)\s*KSH\s+from\s+(\d+)/i', 2, 1],
+    ];
 
     public function __construct(private readonly IntakeInterface $intake)
     {
@@ -23,14 +30,19 @@ class SmsIntakeService
 
     public function handle(string $smsText): void
     {
-        if (! preg_match(self::PATTERN, $smsText, $matches)) {
-            Log::warning('sms_intake_unrecognized_format', ['sms' => $smsText]);
+        foreach (self::PATTERNS as [$network, $pattern, $senderGroup, $amountGroup]) {
+            if (preg_match($pattern, $smsText, $matches)) {
+                $this->processMatch($network, $matches[$senderGroup], $matches[$amountGroup], $smsText);
 
-            return;
+                return;
+            }
         }
 
-        [, $rawSender, $rawAmount] = $matches;
+        Log::warning('sms_intake_unrecognized_format', ['sms' => $smsText]);
+    }
 
+    private function processMatch(string $network, string $rawSender, string $rawAmount, string $smsText): void
+    {
         try {
             $sender = PhoneNumber::normalize($rawSender);
         } catch (InvalidArgumentException) {
@@ -45,7 +57,7 @@ class SmsIntakeService
         // than one pending conversion, fulfil whichever was requested first.
         $conversion = Conversion::query()
             ->where('type', 'airtime')
-            ->where('network', 'safaricom')
+            ->where('network', $network)
             ->where('status', 'awaiting_intake')
             ->where('sender_number', $sender)
             ->where('amount_in', $amount)
@@ -55,6 +67,7 @@ class SmsIntakeService
 
         if (! $conversion) {
             Log::warning('sms_intake_no_matching_conversion', [
+                'network' => $network,
                 'sender' => $sender,
                 'amount' => $amount,
                 'sms' => $smsText,
