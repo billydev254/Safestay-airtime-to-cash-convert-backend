@@ -8,20 +8,22 @@ use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 /**
- * Parses the airtime-transfer confirmation SMS the receiving line gets
- * (forwarded by a third-party SMS-forwarding app), matches it to a pending
- * conversion by network + sender number + amount, then triggers the same
- * payout path the admin's manual "mark received" button uses. Each carrier
- * phrases its confirmation SMS differently, so patterns are per-network.
+ * Parses the transfer confirmation SMS the receiving line gets (forwarded by
+ * a third-party SMS-forwarding app), matches it to a pending conversion by
+ * type + network + sender number + amount, then triggers the same payout
+ * path the admin's manual "mark received" button uses. Each carrier/product
+ * phrases its confirmation SMS differently, so patterns are listed per case.
  */
 class SmsIntakeService
 {
-    // [network, regex, sender capture group, amount capture group]
+    // [conversion type, network (null = not applicable), regex, sender capture group, amount capture group]
     private const PATTERNS = [
         // Safaricom Sambaza: "The subscriber 712345678 transferred 5.00 KSH for you."
-        ['safaricom', '/subscriber\s+(\d+)\s+transferred\s+([\d.]+)\s*KSH/i', 1, 2],
+        ['airtime', 'safaricom', '/subscriber\s+(\d+)\s+transferred\s+([\d.]+)\s*KSH/i', 1, 2],
         // Airtel Me2U: "You have received 50 KSH from 788063011. Your new balance is ..."
-        ['airtel', '/received\s+([\d.]+)\s*KSH\s+from\s+(\d+)/i', 2, 1],
+        ['airtime', 'airtel', '/received\s+([\d.]+)\s*KSH\s+from\s+(\d+)/i', 2, 1],
+        // Bonga points gift: "The 715579172 subscriber transferred point 100 to you. Current point: 3292..."
+        ['bonga', null, '/The\s+(\d+)\s+subscriber\s+transferred\s+point\s+([\d.]+)\s+to\s+you/i', 1, 2],
     ];
 
     public function __construct(private readonly IntakeInterface $intake)
@@ -30,9 +32,9 @@ class SmsIntakeService
 
     public function handle(string $smsText): void
     {
-        foreach (self::PATTERNS as [$network, $pattern, $senderGroup, $amountGroup]) {
+        foreach (self::PATTERNS as [$type, $network, $pattern, $senderGroup, $amountGroup]) {
             if (preg_match($pattern, $smsText, $matches)) {
-                $this->processMatch($network, $matches[$senderGroup], $matches[$amountGroup], $smsText);
+                $this->processMatch($type, $network, $matches[$senderGroup], $matches[$amountGroup], $smsText);
 
                 return;
             }
@@ -41,7 +43,7 @@ class SmsIntakeService
         Log::warning('sms_intake_unrecognized_format', ['sms' => $smsText]);
     }
 
-    private function processMatch(string $network, string $rawSender, string $rawAmount, string $smsText): void
+    private function processMatch(string $type, ?string $network, string $rawSender, string $rawAmount, string $smsText): void
     {
         try {
             $sender = PhoneNumber::normalize($rawSender);
@@ -55,18 +57,25 @@ class SmsIntakeService
 
         // Oldest-first: if the same sender/amount pair somehow matches more
         // than one pending conversion, fulfil whichever was requested first.
-        $conversion = Conversion::query()
-            ->where('type', 'airtime')
-            ->where('network', $network)
+        $query = Conversion::query()
+            ->where('type', $type)
             ->where('status', 'awaiting_intake')
             ->where('sender_number', $sender)
             ->where('amount_in', $amount)
             ->where('created_at', '>=', now()->subHour())
-            ->oldest()
-            ->first();
+            ->oldest();
+
+        // Bonga conversions don't have a network set (it's Safaricom-only,
+        // and the app never sends one for type=bonga).
+        if ($network !== null) {
+            $query->where('network', $network);
+        }
+
+        $conversion = $query->first();
 
         if (! $conversion) {
             Log::warning('sms_intake_no_matching_conversion', [
+                'type' => $type,
                 'network' => $network,
                 'sender' => $sender,
                 'amount' => $amount,
