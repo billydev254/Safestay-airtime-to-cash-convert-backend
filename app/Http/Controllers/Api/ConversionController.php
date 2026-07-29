@@ -39,7 +39,10 @@ class ConversionController extends Controller
             ? (int) Setting::get("{$validated['network']}_cashback_pct", 0)
             : (int) Setting::get('bonga_rate', 0);
 
-        $amountPayout = (int) round($validated['amount_in'] * $cashbackPct / 100);
+        // Floor, not round — the payout must never round up in the
+        // customer's favor (e.g. 1859 pts x 22% = 408.98 pays out KES 408,
+        // not 409).
+        $amountPayout = (int) floor($validated['amount_in'] * $cashbackPct / 100);
 
         // Daraja's B2C API rejects payouts below its own minimum ("Declined
         // due to limit rule") — block these here so the customer never sends
