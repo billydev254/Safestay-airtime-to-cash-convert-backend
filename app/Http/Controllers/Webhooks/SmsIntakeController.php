@@ -8,10 +8,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Receives forwarded Safaricom SMS from the SMS-forwarding app on the
- * receiving line. Guarded by a shared secret since a successful call here
- * ends in a real M-Pesa payout — anyone reaching this without the secret
- * only ever produces a rejected match, never a payout.
+ * Receives forwarded SMS from the SMS-forwarding app on the receiving line.
+ * Guarded by a shared secret since a successful call here ends in a real
+ * M-Pesa payout — anyone reaching this without the secret only ever
+ * produces a rejected match, never a payout.
  */
 class SmsIntakeController extends Controller
 {
@@ -21,7 +21,10 @@ class SmsIntakeController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
-        $service->handle((string) $request->input('key'));
+        $service->handle(
+            smsText: (string) $request->input('key'),
+            fromSender: (string) $request->input('from', ''),
+        );
 
         return response()->json(['status' => 'ok']);
     }

@@ -13,6 +13,13 @@ use InvalidArgumentException;
  * type + network + sender number + amount, then triggers the same payout
  * path the admin's manual "mark received" button uses. Each carrier/product
  * phrases its confirmation SMS differently, so patterns are listed per case.
+ *
+ * Security: the message BODY text is not trustworthy on its own — anyone who
+ * knows the receiving number can text it a fake "transfer received" message
+ * and the body-text regex alone would match it. The forwarding app's real
+ * sender field (who the SMS actually came from, read from Android's SMS
+ * system — not something the message text itself can fake) is required to
+ * actually look like the carrier before any payout is triggered.
  */
 class SmsIntakeService
 {
@@ -26,15 +33,24 @@ class SmsIntakeService
         ['bonga', null, '/The\s+(\d+)\s+subscriber\s+transferred\s+point\s+([\d.]+)\s+to\s+you/i', 1, 2],
     ];
 
+    // Substrings expected in the forwarding app's real "sender" field for a
+    // genuine message from that network — case-insensitive. Bonga has no
+    // network of its own (Safaricom-only), so it's checked against the same
+    // list as Safaricom airtime.
+    private const SENDER_ALLOWLIST = [
+        'safaricom' => ['safaricom', 'mpesa'],
+        'airtel' => ['airtel'],
+    ];
+
     public function __construct(private readonly IntakeInterface $intake)
     {
     }
 
-    public function handle(string $smsText): void
+    public function handle(string $smsText, string $fromSender): void
     {
         foreach (self::PATTERNS as [$type, $network, $pattern, $senderGroup, $amountGroup]) {
             if (preg_match($pattern, $smsText, $matches)) {
-                $this->processMatch($type, $network, $matches[$senderGroup], $matches[$amountGroup], $smsText);
+                $this->processMatch($type, $network, $fromSender, $matches[$senderGroup], $matches[$amountGroup], $smsText);
 
                 return;
             }
@@ -43,8 +59,24 @@ class SmsIntakeService
         Log::warning('sms_intake_unrecognized_format', ['sms' => $smsText]);
     }
 
-    private function processMatch(string $type, ?string $network, string $rawSender, string $rawAmount, string $smsText): void
+    private function processMatch(string $type, ?string $network, string $fromSender, string $rawSender, string $rawAmount, string $smsText): void
     {
+        $allowlistKey = $network ?? 'safaricom';
+        $allowed = self::SENDER_ALLOWLIST[$allowlistKey] ?? [];
+        $fromLower = strtolower($fromSender);
+        $senderLooksGenuine = $fromSender !== '' && collect($allowed)->contains(fn ($needle) => str_contains($fromLower, $needle));
+
+        if (! $senderLooksGenuine) {
+            Log::warning('sms_intake_untrusted_sender', [
+                'type' => $type,
+                'network' => $network,
+                'from' => $fromSender,
+                'sms' => $smsText,
+            ]);
+
+            return;
+        }
+
         try {
             $sender = PhoneNumber::normalize($rawSender);
         } catch (InvalidArgumentException) {
